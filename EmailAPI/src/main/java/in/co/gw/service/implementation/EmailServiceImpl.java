@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import in.co.gw.dao.EmailDao;
@@ -31,6 +32,14 @@ public class EmailServiceImpl implements EmailService{
 	public EmailServiceImpl(JavaMailSender mailSender) {
 		this.mailSender = mailSender;
 	}
+	
+	  @Scheduled(fixedRate = 60000) // 1 minute = 60,000 ms
+	public void executeEveryMinute() {
+        System.out.println("Running task every 1 minute");
+
+        // Call your business logic directly
+        getSentEmail();
+    }
 
 	@Override
 	public List<EmailData> getSentEmail() {
