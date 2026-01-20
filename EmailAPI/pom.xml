@@ -64,17 +64,15 @@
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
 		
-
 		
-		<dependency>
-			<groupId>com.microsoft.sqlserver</groupId>
-			<artifactId>mssql-jdbc</artifactId>
-			<scope>runtime</scope>
-		</dependency>
+		
+		
 		
 	</dependencies>
 
 	<build>
+	<finalName>EmailAPI</finalName>
+
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
