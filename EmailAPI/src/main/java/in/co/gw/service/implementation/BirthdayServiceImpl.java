@@ -17,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -87,7 +89,6 @@ public class BirthdayServiceImpl implements BirthdayService {
 			//Set body Message
 			birthdayEmailData.setBodyMessage(getBirthdayWish(br.getUserName()));
 			
-
 			//For Profile Picture
 			String imageName=br.getEmployeeId()+br.getUserName();
 			System.out.println(imageName+"imageName");
@@ -101,18 +102,20 @@ public class BirthdayServiceImpl implements BirthdayService {
 			String imageSrc = "data:" + img.getContentType() + ";base64," + base64Image;
 			birthdayEmailData.setProfilePictureURL(imageSrc);
 			
+			
+			
 			//----
 			
 			//For mail gif file
 			
-			byte[] bytes = Files.readAllBytes(Paths.get(profilePicdir+"bg_test.png"));
+			byte[] bytes = Files.readAllBytes(Paths.get(profilePicdir+"WISH_SRC.png"));
 			String base64 = Base64.getEncoder().encodeToString(bytes);
 
 			String wishSrc = "data:image/png;base64," + base64;
 			birthdayEmailData.setWishSrc(wishSrc);
 			
 			//Cog gif
-			byte[] gifBytes = Files.readAllBytes(Paths.get(profilePicdir + "congo.gif"));
+			byte[] gifBytes = Files.readAllBytes(Paths.get(profilePicdir + "CONG_GIF.gif"));
 			String gifBase64 = Base64.getEncoder().encodeToString(gifBytes);
 
 			String gifSrc = "data:image/gif;base64," + gifBase64;
@@ -185,14 +188,14 @@ public class BirthdayServiceImpl implements BirthdayService {
 		String mailBody = """
 				<!doctype html>
 <html lang="en">
- 
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Happy Birthday, {{NAME}}</title>
+    <title>Happy Birthday, {{}}</title>
 </head>
- 
+
 <body style="
       margin: 0;
       padding: 0;
@@ -200,12 +203,12 @@ public class BirthdayServiceImpl implements BirthdayService {
       height: 100%;
       font-family: Arial, Helvetica, sans-serif;      
       ">
- 
-    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="height: 100vh; background-color: #f5f5f5;">
+
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="">
         <tr>
             <td align="center" style="padding: 30px 15px">
                 <table border="0" cellpadding="0" cellspacing="0" width="850" style="
-                    max-width: 850px;
+                    max-width: 1350px;
                     width: 100%;
                     background-color: #ffffff;
                     border-radius: 20px;
@@ -224,10 +227,17 @@ public class BirthdayServiceImpl implements BirthdayService {
                         flex-direction: column;
                         align-items: center;
                         justify-content: center;
-                        gap: 225px;
+                        gap: 150px;
                         height: 100%;
                         ">
                                 <div style="flex-shrink: 0">
+                                    <table align="center" width="100%" cellpadding="0" cellspacing="0" border="0">
+                                        <tr>
+                                            <td align="center">
+                                                <img src="{{CONG_GIF}}" alt="" width="150" height="150" style="display:block;">
+                                            </td>
+                                        </tr>
+                                    </table>
                                     <div style="
                               width: 160px;
                               height: 160px;
@@ -243,14 +253,10 @@ public class BirthdayServiceImpl implements BirthdayService {
                                     border-radius: 50%;
                                     object-fit: fit;
                                     " />
-                               
+                                
                                     </div>
                                 </div>
-                                <div
-                                    style="position: absolute; top: 50px; left: 50%; transform: translateX(-50%); z-index: 10;">
-                                    <img src="{{CONG_GIF}}" alt="" style="width: 150px; height: 150px; display: block;">
-                                </div>
- 
+
                                 <div style="flex-shrink: 0">
                                     <img src="{{WISH_SRC}}" alt="Birthday Celebration" style="
                               width: 300px;
@@ -278,7 +284,7 @@ public class BirthdayServiceImpl implements BirthdayService {
                                         </h1>
                                     </td>
                                 </tr>
- 
+
                                 <tr>
                                     <td style="padding-bottom: 15px">
                                         <h2 style="
@@ -294,7 +300,7 @@ public class BirthdayServiceImpl implements BirthdayService {
                                         </h2>
                                     </td>
                                 </tr>
- 
+
                                 <tr>
                                     <td style="
                               padding-bottom: 18px;
@@ -316,7 +322,7 @@ public class BirthdayServiceImpl implements BirthdayService {
                                         </p>
                                     </td>
                                 </tr>
- 
+
                                 <tr>
                                     <td style="padding: 18px 0">
                                         <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -338,7 +344,8 @@ public class BirthdayServiceImpl implements BirthdayService {
                                           font-weight: 600;
                                           font-family: Arial, Helvetica, sans-serif;
                                           ">
-                                                        <strong>"</strong>{{MESSAGE}}<strong> Happy Birthday!</strong>"
+                                                        “{{MESSAGE}}
+                                                        <strong>Happy Birthday!</strong>”
                                                     </p>
                                                     <p style="
                                           margin: 0;
@@ -352,32 +359,31 @@ public class BirthdayServiceImpl implements BirthdayService {
                                                     </p>
                                                 </td>
                                             </tr>
- 
+
                                             <tr>
                                                 <td align="center" style="padding: 18px 0 15px 0">
                                                     <table border="0" cellpadding="0" cellspacing="0">
                                                         <tr>
-                                                            <td bgcolor="#144081" style="border-radius: 30px">
+                                                            <td bgcolor="#144081" style="border-radius: 30px; box-shadow: 0 4px 20px rgba(20, 64, 129, 0.4);">
                                                                 <a href="https://www.linkedin.com/" target="_blank" style="display: inline-block;
- 
-                                                                padding: 14px 36px;
-                                                                font-family: Arial, Helvetica, sans-serif;
-                                                                font-size: 16px;
-                                                                font-weight: 700;
-                                                                color: #144081;
-                                                                text-decoration: none;
-                                                                border-radius: 30px;
-                                                                background-color: #FFFFFF;
-                                                                border: 2px solid #144081;
-                                                   ">
-                                                                    🎉 Let’s Celebrate Together 🎉
+                                                                    padding: 14px 36px;
+                                                                    font-family: Arial, Helvetica, sans-serif;
+                                                                    font-size: 16px;
+                                                                    font-weight: 700;
+                                                                    color: #144081;
+                                                                    text-decoration: none;
+                                                                    border-radius: 30px;
+                                                                    background-color: #FFFFFF;
+                                                                    border: 2px solid #144081;                                                                   
+                                                                ">
+                                                                   Let’s Celebrate
                                                                 </a>
                                                             </td>
                                                         </tr>
                                                     </table>
                                                 </td>
                                             </tr>
- 
+
                                             <tr>
                                                 <td align="center" style="padding-top: 15px">
                                                     <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -404,9 +410,9 @@ public class BirthdayServiceImpl implements BirthdayService {
                                         </table>
                                     </td>
                                 </tr>
- 
+
                             </table>
- 
+
                         </td>
                     </tr>
                     <tr>
@@ -446,9 +452,9 @@ public class BirthdayServiceImpl implements BirthdayService {
             </td>
         </tr>
     </table>
- 
+
 </body>
- 
+
 </html>
 
 				""";
@@ -472,4 +478,6 @@ public class BirthdayServiceImpl implements BirthdayService {
 //		 return mailBody;
 	//}
 
+	
+	
 }
