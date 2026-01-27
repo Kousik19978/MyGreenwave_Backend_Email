@@ -194,8 +194,37 @@ public class BirthdayServiceImpl implements BirthdayService {
     }
 
 
+<<<<<<< HEAD
     public ImageData getProfilePicture(String imageName) throws IOException {
         Path directory = Paths.get(profilePicdir);
+=======
+	@Override
+	//@Scheduled(cron = "0 0 10 * * ?", zone = "Asia/Kolkata")
+	//@Scheduled(cron = "0 30 15 * * ?", zone = "Asia/Kolkata")
+	public Map<String, String> saveBirthdayMail()  throws IOException, java.io.IOException{
+		
+		List<BirthdayData> birthdayEmailDataList =birthdayMailDao.getbirthday();
+		Map<String, String> map = new HashMap<String, String>();
+		
+		for(BirthdayData br : birthdayEmailDataList) {
+			BirthdayEmailData birthdayEmailData = new BirthdayEmailData();
+			birthdayEmailData.setCategory("BirthDay");
+			birthdayEmailData.setAddressingTo(br.getUserId());
+			birthdayEmailData.setSubject("Happy Birthday");
+			birthdayEmailData.setGreeting(br.getUserName());
+			birthdayEmailData.setUserName(br.getUserName());
+			
+			
+			//Set body Message
+			birthdayEmailData.setBodyMessage(getBirthdayWish(br.getUserName()));
+			
+			//For Profile Picture
+			String imageName=br.getEmployeeId()+br.getUserName();
+			System.out.println(imageName+"imageName");
+			logger.info(imageName);
+			
+			ImageData img = getProfilePicture(imageName);
+>>>>>>> 9851860dc4ec8b896f406396a0a596eb18ba1e05
 
         if (!Files.exists(directory) || !Files.isDirectory(directory)) {
             throw new FileNotFoundException("Image directory not found.");
