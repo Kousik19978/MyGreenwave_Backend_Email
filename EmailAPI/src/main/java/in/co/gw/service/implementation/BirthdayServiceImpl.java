@@ -71,7 +71,7 @@ public class BirthdayServiceImpl implements BirthdayService {
 
 	@Override
 	//@Scheduled(cron = "0 0 10 * * ?", zone = "Asia/Kolkata")
-	@Scheduled(cron = "0 30 15 * * ?", zone = "Asia/Kolkata")
+	//@Scheduled(cron = "0 30 15 * * ?", zone = "Asia/Kolkata")
 	public Map<String, String> saveBirthdayMail()  throws IOException, java.io.IOException{
 		
 		List<BirthdayData> birthdayEmailDataList =birthdayMailDao.getbirthday();
