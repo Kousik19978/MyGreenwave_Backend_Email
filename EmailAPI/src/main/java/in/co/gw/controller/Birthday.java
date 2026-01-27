@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import in.co.gw.service.BirthdayService;
 import in.co.gw.utility.ImageData;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
@@ -30,6 +32,14 @@ public class Birthday {
 		
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
+
+	@GetMapping("/v2")
+	public ResponseEntity<?> saveBirthDayForMailv2() throws IOException, java.io.IOException {
+		Map<String,String> response=birthdayService.saveBirthdayMailv2();
+		
+		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
+	
 	
 //	@GetMapping("/profile-image/{empId}")
 //	public ResponseEntity<byte[]> getProfileImage(@PathVariable String empId)
